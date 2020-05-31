@@ -1,0 +1,160 @@
+
+bool CMonitorGDI::getMouse()
+{
+	CURSORINFO		cursorInfo		= { 0 };
+	ICONINFO		iconInfo		= { 0 };
+	BITMAP			bitInfo			= { 0 };
+	RECT			rtCursor		= { 0 };
+	LPBYTE			bitBuff			= NULL;
+	bool			isSuccess		= false;
+
+
+
+	GDeskDup::SMouseShapeEx&	mouse	= m_parent.m_mouseShape;
+	while ( !isSuccess )
+	{
+		cursorInfo.cbSize		= sizeof( CURSORINFO );
+		if ( !GetCursorInfo( &cursorInfo ) ) break;
+		mouse.visible	= ( cursorInfo.flags & CURSOR_SHOWING ) == CURSOR_SHOWING ? true : false;
+		mouse.position	= cursorInfo.ptScreenPos;
+		if ( !PtInRect( &m_parent.m_monitors[m_monitor].rcMonitor, mouse.position ) )
+		{
+			break;
+		}
+		if ( 0 == cursorInfo.hCursor ) break;
+		if ( cursorInfo.hCursor == mouse.cursorHandle ) return true;
+		mouse.cursorHandle	= cursorInfo.hCursor;
+		if ( !GetIconInfo( cursorInfo.hCursor, &iconInfo ) ) break;
+		mouse.hotSpot.x		= iconInfo.xHotspot;
+		mouse.hotSpot.y		= iconInfo.yHotspot;
+		mouse.lastTimeStamp.QuadPart	= GetTickCount();
+		INT		pixelBits	= 0;
+		if ( iconInfo.hbmColor )
+		{
+			DIBSECTION	dibSection	= { 0 };
+		//	INT		testGet		= GetObject( (HGDIOBJ)iconInfo.hbmColor, sizeof( DIBSECTION ), (LPVOID)&dibSection );
+			INT		infoSize	= GetObject( (HGDIOBJ)iconInfo.hbmColor, sizeof( BITMAP ), (LPVOID)&bitInfo );
+			if ( 0 == infoSize ) break;
+			INT		bitSize	= bitInfo.bmWidthBytes * bitInfo.bmHeight;
+			bitBuff	= (LPBYTE)malloc( bitSize );
+			if ( 0 == bitBuff ) break;
+			if ( 0 == GetBitmapBits( iconInfo.hbmColor, bitSize, bitBuff ) ) break;
+			mouse.pitch	= bitInfo.bmWidth * 4;
+			bitSize	= mouse.pitch * bitInfo.bmHeight;
+			if ( mouse.bufferSize < bitSize )
+			{
+				mouse.shapeBuffer	= (LPBYTE)realloc( mouse.shapeBuffer, bitSize );
+				if ( 0 == mouse.shapeBuffer )
+				{
+					mouse.bufferSize	= 0;
+					break;
+				}
+				mouse.bufferSize	= bitSize;
+			}
+			//assert( bitInfo.bmBitsPixel == 32 || bitInfo.bmBitsPixel == 1 );
+			//assert( bitInfo.bmPlanes == 1 && iconInfo.fIcon == 0 );
+			pixelBits	= bitInfo.bmBitsPixel;
+			switch ( bitInfo.bmBitsPixel )
+			{
+			case 32:
+				for ( INT y = 0; y < bitInfo.bmHeight; ++y )
+				{
+					memcpy( mouse.shapeBuffer + y * mouse.pitch,
+						bitBuff + y * bitInfo.bmWidthBytes, min( mouse.pitch, bitInfo.bmWidthBytes ) );
+				}
+				break;
+			case 1:
+				for ( INT y = 0; y < bitInfo.bmHeight; ++y )
+				{
+					BYTE	maskBit	= 0x80;
+					LPDWORD	rgbaPix	= LPDWORD( mouse.shapeBuffer + y * mouse.pitch );
+					LPBYTE	monoPix	= bitBuff + y * bitInfo.bmWidthBytes;
+					for ( INT x = 0; x < bitInfo.bmWidth; ++x )
+					{
+						rgbaPix[x]	= ( *monoPix & maskBit ) ? 0xFFFFFFFF : 0xFF000000;
+						if ( maskBit == 0x01 ) {
+							maskBit	= 0x80;
+							++monoPix;
+						}
+						else
+							maskBit	>>= 1;
+					}
+				}
+			}
+			free( bitBuff );
+			bitBuff	= NULL;
+			mouse.type		= IDeskDup::eShapeColor;
+			mouse.size.cx	= bitInfo.bmWidth;
+			mouse.size.cy	= bitInfo.bmHeight;
+		}
+		if ( iconInfo.hbmMask )
+		{
+			INT		infoSize	= GetObject( (HGDIOBJ)iconInfo.hbmMask, sizeof( BITMAP ), (LPVOID)&bitInfo );
+			if ( 0 == infoSize ) break;
+			INT		bitSize	= bitInfo.bmWidthBytes * bitInfo.bmHeight;
+			bitBuff	= (LPBYTE)malloc( bitSize );
+			if ( 0 == bitBuff ) break;
+			if ( 0 == GetBitmapBits( iconInfo.hbmMask, bitSize, bitBuff ) ) break;
+			if ( 0 == pixelBits )	//如果不是彩色图标，那么就是单色
+			{
+				mouse.pitch	= bitInfo.bmWidthBytes;
+				bitSize	= mouse.pitch * bitInfo.bmHeight;
+				if ( mouse.bufferSize < bitSize )
+				{
+					mouse.shapeBuffer	= (LPBYTE)realloc( mouse.shapeBuffer, bitSize );
+					if ( 0 == mouse.shapeBuffer )
+					{
+						mouse.bufferSize	= 0;
+						break;
+					}
+					mouse.bufferSize	= bitSize;
+				}
+				memcpy( mouse.shapeBuffer, bitBuff, bitSize );
+				mouse.type		= IDeskDup::eShapeMonochrome;
+				mouse.size.cx	= bitInfo.bmWidth;
+				mouse.size.cy	= bitInfo.bmHeight;
+			}
+			else if ( pixelBits != 32 )
+			{
+				//是彩色图标，但是又不是32位，且有 mask，那么 mask 就只有 AND 的数据。
+				for ( INT y = 0; y < bitInfo.bmHeight; ++y )
+				{
+					BYTE	maskBit	= 0x80;
+					LPDWORD	rgbaPix	= LPDWORD( mouse.shapeBuffer + y * mouse.pitch );
+					LPBYTE	monoPix	= bitBuff + y * bitInfo.bmWidthBytes;
+					for ( INT x = 0; x < bitInfo.bmWidth; ++x )
+					{
+						if ( *monoPix & maskBit )
+						{
+							rgbaPix[x]	= 0xFF000000;
+						}
+						else
+						{
+							rgbaPix[x]	&= 0x00FFFFFF;
+						}
+						if ( maskBit == 0x01 ) {
+							maskBit	= 0x80;
+							++monoPix;
+						}
+						else
+							maskBit	>>= 1;
+					}
+				}
+				mouse.type		= IDeskDup::eShapeMasked;
+			}
+			free( bitBuff );
+			bitBuff	= NULL;
+		}
+		isSuccess	= true;
+		break;
+	}
+	if ( !isSuccess )
+	{
+		mouse.visible		= false;
+		mouse.cursorHandle	= 0;
+	}
+	if ( iconInfo.hbmColor ) DeleteObject( iconInfo.hbmColor );
+	if ( iconInfo.hbmMask ) DeleteObject( iconInfo.hbmMask );
+	if ( bitBuff ) free( bitBuff );
+	return isSuccess;
+}
