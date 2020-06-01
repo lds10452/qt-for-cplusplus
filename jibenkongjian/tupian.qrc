@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/">
+        <file>tubiao/2-背景.png</file>
+        <file>tubiao/3_R_Piece_image_0.bmp</file>
+        <file>tubiao/10.jpg</file>
+        <file>tubiao/Delphi.jpg</file>
+        <file>tubiao/error_cmake.txt</file>
+        <file>tubiao/getCursor.txt</file>
+        <file>tubiao/kk.gif</file>
+        <file>tubiao/okbutton.png</file>
+        <file>tubiao/openGl书籍.txt</file>
+        <file>tubiao/P01.jpg</file>
+        <file>tubiao/QQ.jpg</file>
+        <file>tubiao/QQ图片20140613151729.gif</file>
+        <file>tubiao/show.gif</file>
+        <file>tubiao/Six_flight_instruments.JPG</file>
+        <file>tubiao/wave.gif</file>
+        <file>tubiao/webwxgetmsgimg.jpg</file>
+        <file>tubiao/界面.jpg</file>
+        <file>tubiao/配色方案.png</file>
+        <file>tubiao/网站截图.png</file>
+    </qresource>
+</RCC>

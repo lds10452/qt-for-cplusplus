@@ -1,0 +1,64 @@
+Starting to parse CMake project, using: "-DCMAKE_ANDROID_NDK:PATH=F:/Android/android-ndk-r14b", "-DCMAKE_CXX_COMPILER:STRING=F:/Android/android-ndk-r14b/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe", "-DCMAKE_C_COMPILER:STRING=F:/Android/android-ndk-r14b/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe", "-DCMAKE_PREFIX_PATH:STRING=F:/Qt/Qt5.12.0/5.12.0/android_armv7", "-DCMAKE_SYSTEM_NAME:STRING=Android", "-DQT_QMAKE_EXECUTABLE:STRING=F:/Qt/Qt5.12.0/5.12.0/android_armv7/bin/qmake.exe".
+Android: Targeting API '24' with architecture 'arm', ABI 'armeabi', and processor 'armv5te'
+Android: Selected GCC toolchain 'arm-linux-androideabi-4.9'
+The C compiler identification is GNU 4.9.0
+The CXX compiler identification is GNU 4.9.0
+Check for working C compiler: F:/Android/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/bin/arm-linux-androideabi-gcc.exe
+Check for working C compiler: F:/Android/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/bin/arm-linux-androideabi-gcc.exe -- works
+Detecting C compiler ABI info
+Detecting C compiler ABI info - done
+Detecting C compile features
+Detecting C compile features - done
+Check for working CXX compiler: F:/Android/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/bin/arm-linux-androideabi-g++.exe
+Check for working CXX compiler: F:/Android/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/bin/arm-linux-androideabi-g++.exe -- works
+Detecting CXX compiler ABI info
+Detecting CXX compiler ABI info - done
+Detecting CXX compile features
+Detecting CXX compile features - done
+Configuring done
+You have changed variables that require your cache to be deleted.
+Configure will be re-run and you may have to reset some variables.
+The following variables have changed:
+CMAKE_C_COMPILER= F:/Android/android-ndk-r14b/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe
+CMAKE_CXX_COMPILER= F:/Android/android-ndk-r14b/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe
+
+The C compiler identification is Clang 3.8.275480
+The CXX compiler identification is Clang 3.8.275480
+Check for working C compiler: F:/Android/android-ndk-r14b/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe
+Check for working C compiler: F:/Android/android-ndk-r14b/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe -- broken
+CMake Error at C:/Program Files/CMake/share/cmake-3.13/Modules/CMakeTestCCompiler.cmake:52 (message):
+  The C compiler
+
+    "F:/Android/android-ndk-r14b/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe"
+
+  is not able to compile a simple test program.
+
+  It fails with the following output:
+
+    Change Dir: F:/source/demo/build-testCmake-Android_for_armeabi_v7a_Clang_Qt_5_12_0_for_Android_ARMv7-Default/CMakeFiles/CMakeTmp
+    
+    Run Build Command:"jom" "/nologo" "cmTC_652a9\fast"
+    jom: parallel job execution disabled for Makefile
+    	F:\Qt\Qt5.12.0\Tools\QtCreator\bin\jom.exe -f CMakeFiles\cmTC_652a9.dir\build.make /nologo -L CMakeFiles\cmTC_652a9.dir\build
+    Building C object CMakeFiles/cmTC_652a9.dir/testCCompiler.c.o
+    	F:\Android\android-ndk-r14b\toolchains\llvm\prebuilt\windows-x86_64\bin\clang.exe    -o CMakeFiles\cmTC_652a9.dir\testCCompiler.c.o   -c F:\source\demo\build-testCmake-Android_for_armeabi_v7a_Clang_Qt_5_12_0_for_Android_ARMv7-Default\CMakeFiles\CMakeTmp\testCCompiler.c
+    Linking C executable cmTC_652a9.exe
+    	"C:\Program Files\CMake\bin\cmake.exe" -E remove -f CMakeFiles\cmTC_652a9.dir/objects.a
+    	CMAKE_AR-NOTFOUND cr CMakeFiles\cmTC_652a9.dir/objects.a @CMakeFiles\cmTC_652a9.dir\objects1.rsp
+    'CMAKE_AR-NOTFOUND' 不是内部或外部命令，也不是可运行的程序
+    或批处理文件。
+    jom: F:\source\demo\build-testCmake-Android_for_armeabi_v7a_Clang_Qt_5_12_0_for_Android_ARMv7-Default\CMakeFiles\CMakeTmp\CMakeFiles\cmTC_652a9.dir\build.make [cmTC_652a9.exe] Error 1
+    jom: F:\source\demo\build-testCmake-Android_for_armeabi_v7a_Clang_Qt_5_12_0_for_Android_ARMv7-Default\CMakeFiles\CMakeTmp\Makefile [cmTC_652a9\fast] Error 2
+    
+
+  
+
+  CMake will not be able to correctly generate this project.
+Call Stack (most recent call first):
+  CMakeLists.txt:3 (project)
+
+
+Configuring incomplete, errors occurred!
+See also "F:/source/demo/build-testCmake-Android_for_armeabi_v7a_Clang_Qt_5_12_0_for_Android_ARMv7-Default/CMakeFiles/CMakeOutput.log".
+See also "F:/source/demo/build-testCmake-Android_for_armeabi_v7a_Clang_Qt_5_12_0_for_Android_ARMv7-Default/CMakeFiles/CMakeError.log".
+CMake Project parsing failed.
